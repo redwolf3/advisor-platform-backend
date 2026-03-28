@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: disney-planner-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/disneyplanner}
+    username: ${DB_USER:disneyplanner}
+    password: ${DB_PASS:disneyplanner}
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: claude-haiku-4-5-20251001
+          max-tokens: 1024
+          temperature: 0.7
+
+server:
+  port: 8080
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  auth:
+    provider: supabase
+    supabase:
+      jwt-secret: ${SUPABASE_JWT_SECRET:}
+  session:
+    expiry-days: 90
+  otp:
+    expiry-minutes: 15
+    max-attempts: 5
