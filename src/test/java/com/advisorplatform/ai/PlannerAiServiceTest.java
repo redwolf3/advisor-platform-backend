@@ -116,6 +116,9 @@ class PlannerAiServiceTest {
         assertThat(instructions).hasSize(8);
         assertThat(instructions.get(0)).isInstanceOf(SystemMessage.class);
         assertThat(instructions.get(7)).isInstanceOf(UserMessage.class);
+        // position 1 should be the first windowed history message (user 1, not user 0 which was dropped)
+        assertThat(instructions.get(1)).isInstanceOf(UserMessage.class);
+        assertThat(((UserMessage) instructions.get(1)).getText()).contains("user 1");
     }
 
     // ── streamChat ───────────────────────────────────────────────────────────
@@ -151,6 +154,10 @@ class PlannerAiServiceTest {
 
         assertThat(chunks).containsExactly("Hello");
         // user message persisted before stream + assistant message persisted in doOnComplete
-        verify(messageRepository, times(2)).save(any(AiMessage.class));
+        ArgumentCaptor<AiMessage> saveCaptor = ArgumentCaptor.forClass(AiMessage.class);
+        verify(messageRepository, times(2)).save(saveCaptor.capture());
+        AiMessage assistantMsg = saveCaptor.getAllValues().get(1);
+        assertThat(assistantMsg.getContent()).isEqualTo("Hello");
+        assertThat(assistantMsg.getRole()).isEqualTo("assistant");
     }
 }
