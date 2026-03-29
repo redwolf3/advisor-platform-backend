@@ -1,11 +1,11 @@
-package com.disneyplanner;
+package com.advisorplatform;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DisneyPlannerApplication {
+public class AdvisorPlatformApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DisneyPlannerApplication.class, args);
+        SpringApplication.run(AdvisorPlatformApplication.class, args);
     }
 }

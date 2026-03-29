@@ -1,4 +1,4 @@
-package com.disneyplanner.domain.model;
+package com.advisorplatform.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,10 +9,12 @@ import java.util.UUID;
 @Table(name = "thread_message")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ThreadMessage {
-    @Id @GeneratedValue(strategy = GenerationType.UUID)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "thread_id", nullable = false)
     private MessageThread thread;
 
@@ -22,11 +24,9 @@ public class ThreadMessage {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "sent_via")
-    private String sentVia; // "app" | "email"
-
     @Column(name = "email_notified", nullable = false)
-    private boolean emailNotified;
+    @Builder.Default
+    private boolean emailNotified = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

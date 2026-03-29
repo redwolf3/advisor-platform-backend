@@ -1,4 +1,4 @@
-# Disney Planner Backend — Claude Code Standards
+# Advisor Platform Backend — Claude Code Standards
 
 ## Build & Run
 
@@ -11,9 +11,9 @@ mvn spring-boot:run
 
 # Required env vars (copy .env.example to .env)
 export ANTHROPIC_API_KEY=sk-ant-...
-export DB_URL=jdbc:postgresql://localhost:5432/disneyplanner
-export DB_USER=disneyplanner
-export DB_PASS=disneyplanner
+export DB_URL=jdbc:postgresql://localhost:5432/advisorplatform
+export DB_USER=advisorplatform
+export DB_PASS=advisorplatform
 export CORS_ORIGINS=http://localhost:5173
 ```
 

@@ -1,9 +1,9 @@
-package com.disneyplanner.api;
+package com.advisorplatform.api;
 
-import com.disneyplanner.ai.PlannerAiService;
-import com.disneyplanner.domain.entity.AiMessage;
-import com.disneyplanner.domain.entity.AiSession;
-import com.disneyplanner.service.VisitorService;
+import com.advisorplatform.ai.PlannerAiService;
+import com.advisorplatform.domain.entity.AiMessage;
+import com.advisorplatform.domain.entity.AiSession;
+import com.advisorplatform.service.VisitorService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.MediaType;

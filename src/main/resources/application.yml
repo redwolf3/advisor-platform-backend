@@ -1,10 +1,10 @@
 spring:
   application:
-    name: disney-planner-backend
+    name: advisor-platform-backend
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/disneyplanner}
-    username: ${DB_USER:disneyplanner}
-    password: ${DB_PASS:disneyplanner}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/advisorplatform}
+    username: ${DB_USER:advisorplatform}
+    password: ${DB_PASS:advisorplatform}
     hikari:
       maximum-pool-size: 10
   jpa:
@@ -29,6 +29,9 @@ server:
 app:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  ai:
+    system-prompt-path: prompts/system.md
+    max-history-turns: 10
   auth:
     provider: supabase
     supabase:

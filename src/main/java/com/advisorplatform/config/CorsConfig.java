@@ -1,4 +1,4 @@
-package com.disneyplanner.config;
+package com.advisorplatform.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

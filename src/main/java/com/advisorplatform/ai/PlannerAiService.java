@@ -1,14 +1,14 @@
-package com.disneyplanner.ai;
+package com.advisorplatform.ai;
 
-import com.disneyplanner.domain.entity.AiMessage;
-import com.disneyplanner.domain.entity.AiSession;
-import com.disneyplanner.domain.repository.AiMessageRepository;
-import com.disneyplanner.domain.repository.AiSessionRepository;
-import org.springframework.ai.anthropic.AnthropicChatModel;
+import com.advisorplatform.domain.entity.AiMessage;
+import com.advisorplatform.domain.entity.AiSession;
+import com.advisorplatform.domain.repository.AiMessageRepository;
+import com.advisorplatform.domain.repository.AiSessionRepository;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,14 +27,14 @@ import java.util.UUID;
 @Service
 public class PlannerAiService {
 
-    private final AnthropicChatModel chatModel;
+    private final ChatModel chatModel;
     private final AiSessionRepository sessionRepository;
     private final AiMessageRepository messageRepository;
     private final String systemPrompt;
     private final int maxHistoryTurns;
 
     public PlannerAiService(
-            AnthropicChatModel chatModel,
+            ChatModel chatModel,
             AiSessionRepository sessionRepository,
             AiMessageRepository messageRepository,
             @Value("classpath:${app.ai.system-prompt-path}") Resource systemPromptResource,

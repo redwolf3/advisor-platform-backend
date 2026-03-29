@@ -1,9 +1,9 @@
-package com.disneyplanner.service;
+package com.advisorplatform.service;
 
-import com.disneyplanner.domain.entity.AiSession;
-import com.disneyplanner.domain.entity.Visitor;
-import com.disneyplanner.domain.repository.AiSessionRepository;
-import com.disneyplanner.domain.repository.VisitorRepository;
+import com.advisorplatform.domain.entity.AiSession;
+import com.advisorplatform.domain.entity.Visitor;
+import com.advisorplatform.domain.repository.AiSessionRepository;
+import com.advisorplatform.domain.repository.VisitorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

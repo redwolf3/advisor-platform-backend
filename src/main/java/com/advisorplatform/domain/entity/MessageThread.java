@@ -1,29 +1,33 @@
-package com.disneyplanner.domain.model;
+package com.advisorplatform.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import java.time.Instant;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ai_session")
+@Table(name = "message_thread")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class AiSession {
-    @Id @GeneratedValue(strategy = GenerationType.UUID)
+public class MessageThread {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "visitor_id", nullable = false)
     private Visitor visitor;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ai_session_id")
+    private AiSession aiSession;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "trip_context", columnDefinition = "jsonb")
-    private Map<String, Object> tripContext;
+    @Column
+    private String subject;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private String status = "open"; // open | pending_reply | resolved | closed
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

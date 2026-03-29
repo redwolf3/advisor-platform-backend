@@ -1,6 +1,6 @@
-package com.disneyplanner.domain.repository;
+package com.advisorplatform.domain.repository;
 
-import com.disneyplanner.domain.entity.AiMessage;
+import com.advisorplatform.domain.entity.AiMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;

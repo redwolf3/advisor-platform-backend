@@ -1,4 +1,4 @@
-package com.disneyplanner.domain.entity;
+package com.advisorplatform.domain.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;

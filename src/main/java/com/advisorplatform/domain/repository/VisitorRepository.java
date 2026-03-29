@@ -1,6 +1,6 @@
-package com.disneyplanner.domain.repository;
+package com.advisorplatform.domain.repository;
 
-import com.disneyplanner.domain.entity.Visitor;
+import com.advisorplatform.domain.entity.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
