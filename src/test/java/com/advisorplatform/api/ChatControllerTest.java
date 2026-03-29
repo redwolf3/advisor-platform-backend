@@ -64,15 +64,16 @@ class ChatControllerTest {
 
     @Test
     void createSession_validVisitorId_returns200WithSessionId() throws Exception {
+        UUID visitorId = UUID.randomUUID();
         UUID sessionId = UUID.randomUUID();
         AiSession session = new AiSession();
         ReflectionTestUtils.setField(session, "id", sessionId);
         ReflectionTestUtils.setField(session, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
-        when(visitorService.createSession(any(UUID.class))).thenReturn(session);
+        when(visitorService.createSession(eq(visitorId))).thenReturn(session);
 
         mockMvc.perform(post("/api/session")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"visitorId\":\"" + UUID.randomUUID() + "\"}"))
+                        .content("{\"visitorId\":\"" + visitorId + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").value(sessionId.toString()));
     }
@@ -130,6 +131,7 @@ class ChatControllerTest {
         mockMvc.perform(post("/api/chat/{sessionId}/stream", sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"message\":\"Hi\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM));
     }
 }
