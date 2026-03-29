@@ -40,7 +40,9 @@ class VisitorServiceTest {
         Visitor result = visitorService.findOrCreate("token-abc");
 
         assertThat(result).isSameAs(existing);
-        verify(visitorRepository).save(existing);
+        ArgumentCaptor<Visitor> captor = ArgumentCaptor.forClass(Visitor.class);
+        verify(visitorRepository).save(captor.capture());
+        assertThat(captor.getValue().getLastSeenAt()).isNotNull();
     }
 
     @Test
@@ -88,7 +90,7 @@ class VisitorServiceTest {
     // ── getSessions ──────────────────────────────────────────────────────────
 
     @Test
-    void getSessions_delegatesAndReturnsSortedList() {
+    void getSessions_delegatesToRepositoryAndReturnsResult() {
         UUID visitorId = UUID.randomUUID();
         List<AiSession> sessions = List.of(new AiSession(), new AiSession());
         when(aiSessionRepository.findByVisitorIdOrderByCreatedAtDesc(visitorId)).thenReturn(sessions);
