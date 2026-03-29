@@ -49,7 +49,9 @@ class MessageServiceTest {
 
         assertThat(result).isSameAs(savedThread);
         verify(messageRepo).save(argThat(m ->
-                "visitor".equals(m.getSenderRole()) && "Hello there".equals(m.getContent())));
+                "visitor".equals(m.getSenderRole())
+                && "Hello there".equals(m.getContent())
+                && savedThread.equals(m.getThread())));
     }
 
     @Test
