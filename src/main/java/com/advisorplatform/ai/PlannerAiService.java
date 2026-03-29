@@ -55,12 +55,16 @@ public class PlannerAiService {
         AiSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
+        // Load history BEFORE persisting the user message to avoid the new message
+        // appearing in the reloaded history and then again as the final UserMessage.
+        List<AiMessage> history = messageRepository.findBySessionIdOrderByCreatedAtAsc(session.getId());
+
         // Persist user message
         AiMessage userMsg = AiMessage.userMessage(session, userContent);
         messageRepository.save(userMsg);
 
-        // Build prompt with history window
-        List<Message> messages = buildMessages(session, userContent);
+        // Build prompt with pre-loaded history window
+        List<Message> messages = buildMessages(history, userContent);
         Prompt prompt = new Prompt(messages);
 
         long start = System.currentTimeMillis();
@@ -89,10 +93,13 @@ public class PlannerAiService {
         AiSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
 
+        // Load history BEFORE persisting the user message (same fix as chat()).
+        List<AiMessage> history = messageRepository.findBySessionIdOrderByCreatedAtAsc(session.getId());
+
         AiMessage userMsg = AiMessage.userMessage(session, userContent);
         messageRepository.save(userMsg);
 
-        List<Message> messages = buildMessages(session, userContent);
+        List<Message> messages = buildMessages(history, userContent);
         Prompt prompt = new Prompt(messages);
 
         long start = System.currentTimeMillis();
@@ -115,12 +122,11 @@ public class PlannerAiService {
                 });
     }
 
-    private List<Message> buildMessages(AiSession session, String newUserContent) {
+    private List<Message> buildMessages(List<AiMessage> history, String newUserContent) {
         List<Message> messages = new ArrayList<>();
         messages.add(new SystemMessage(systemPrompt));
 
-        // Load recent history, capped to maxHistoryTurns pairs
-        List<AiMessage> history = messageRepository.findBySessionIdOrderByCreatedAtAsc(session.getId());
+        // Apply window cap to the pre-loaded history (maxHistoryTurns pairs)
         int startIndex = Math.max(0, history.size() - (maxHistoryTurns * 2));
         for (int i = startIndex; i < history.size(); i++) {
             AiMessage m = history.get(i);
