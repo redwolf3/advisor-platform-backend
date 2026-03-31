@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +35,8 @@ class VisitorServiceTest {
     void findOrCreate_existingVisitor_updatesLastSeenAtAndReturns() {
         Visitor existing = new Visitor();
         existing.setBrowserToken("token-abc");
+        Instant oldTime = Instant.parse("2020-01-01T00:00:00Z");
+        existing.setLastSeenAt(oldTime);  // pin to a known past value so we can detect the update
         when(visitorRepository.findByBrowserToken("token-abc")).thenReturn(Optional.of(existing));
         when(visitorRepository.save(existing)).thenReturn(existing);
 
@@ -42,7 +45,7 @@ class VisitorServiceTest {
         assertThat(result).isSameAs(existing);
         ArgumentCaptor<Visitor> captor = ArgumentCaptor.forClass(Visitor.class);
         verify(visitorRepository).save(captor.capture());
-        assertThat(captor.getValue().getLastSeenAt()).isNotNull();
+        assertThat(captor.getValue().getLastSeenAt()).isAfter(oldTime);
     }
 
     @Test
