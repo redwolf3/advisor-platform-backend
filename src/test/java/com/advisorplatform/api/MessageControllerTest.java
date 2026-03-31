@@ -62,6 +62,18 @@ class MessageControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void createThread_serviceThrowsIllegalArgument_returns400() throws Exception {
+        when(messageService.createThread(any(), any(), any(), any()))
+                .thenThrow(new IllegalArgumentException("Visitor not found: some-id"));
+
+        mockMvc.perform(post("/api/message")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"visitorId\":\"" + UUID.randomUUID() + "\","
+                                + "\"content\":\"Hello\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
     // ── GET /api/visitor/{visitorId}/threads ──────────────────────────────────
 
     @Test

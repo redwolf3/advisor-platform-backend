@@ -78,6 +78,17 @@ class ChatControllerTest {
                 .andExpect(jsonPath("$.sessionId").value(sessionId.toString()));
     }
 
+    @Test
+    void createSession_serviceThrowsIllegalArgument_returns400() throws Exception {
+        when(visitorService.createSession(any()))
+                .thenThrow(new IllegalArgumentException("Visitor not found: some-id"));
+
+        mockMvc.perform(post("/api/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"visitorId\":\"" + UUID.randomUUID() + "\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
     // ── GET /api/visitor/{visitorId}/sessions ─────────────────────────────────
 
     @Test
