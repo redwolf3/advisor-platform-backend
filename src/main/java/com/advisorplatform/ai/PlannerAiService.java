@@ -86,9 +86,9 @@ public class PlannerAiService {
 
     /**
      * Streaming version — returns a Flux of text chunks for SSE.
-     * Persistence of the full response happens when the stream completes.
+     * User message is persisted immediately; assistant message is persisted in a
+     * separate transaction when the stream completes.
      */
-    @Transactional
     public Flux<String> streamChat(UUID sessionId, String userContent) {
         AiSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
