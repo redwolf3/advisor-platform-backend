@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -99,6 +100,8 @@ class MessageServiceTest {
     void addMessage_knownThread_savesVisitorMessageAndBumpsThread() {
         UUID threadId = UUID.randomUUID();
         MessageThread thread = MessageThread.builder().build();
+        Instant oldTime = Instant.parse("2020-01-01T00:00:00Z");
+        thread.setUpdatedAt(oldTime); // pin to a known past value so we can detect the bump
         when(threadRepo.findById(threadId)).thenReturn(Optional.of(thread));
         ThreadMessage saved = ThreadMessage.builder()
                 .thread(thread).senderRole("visitor").content("More info").build();
@@ -110,7 +113,9 @@ class MessageServiceTest {
         assertThat(result).isSameAs(saved);
         verify(messageRepo).save(argThat(m ->
                 "visitor".equals(m.getSenderRole()) && "More info".equals(m.getContent())));
-        verify(threadRepo).save(thread); // updatedAt bump
+        // updatedAt must have been explicitly set before threadRepo.save
+        assertThat(thread.getUpdatedAt()).isAfter(oldTime);
+        verify(threadRepo).save(thread);
     }
 
     @Test

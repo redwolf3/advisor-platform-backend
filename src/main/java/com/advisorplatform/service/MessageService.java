@@ -11,6 +11,7 @@ import com.advisorplatform.domain.repository.VisitorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,7 +73,8 @@ public class MessageService {
                 .build();
         message = messageRepo.save(message);
 
-        // Bump updatedAt via @PreUpdate
+        // Dirty the entity so Hibernate issues UPDATE and updatedAt is refreshed
+        thread.setUpdatedAt(Instant.now());
         threadRepo.save(thread);
 
         return message;
