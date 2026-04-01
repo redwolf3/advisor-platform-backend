@@ -21,7 +21,7 @@ export CORS_ORIGINS=http://localhost:5173
 
 - **Java 21** — use sealed interfaces, pattern matching where appropriate
 - **Constructor injection** — never `@Autowired` on fields
-- **Lombok only on JPA entities** — `@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder`
+- **Lombok only on hand-written JPA entities** — `@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder`; generated API models also use Lombok (via codegen) — this is intentional and not subject to this restriction
 - **`@Transactional` on service write methods** — not on controllers
 - **Instant not LocalDateTime** — all timestamps UTC, mapped to `TIMESTAMPTZ`
 
