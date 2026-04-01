@@ -40,7 +40,7 @@ Every change to this repository — planned feature or reactive fix — is track
 
 ## Branch Naming
 
-Pattern: `{type}/{issue-number}-{kebab-case-description}`
+Pattern: `{branch-prefix}/{issue-number}-{kebab-case-description}`
 
 | Issue type | Branch prefix |
 |---|---|
@@ -50,6 +50,8 @@ Pattern: `{type}/{issue-number}-{kebab-case-description}`
 | chore | `chore/` |
 | refactor | `refactor/` |
 | test | `test/` |
+
+Note: the `feat` issue type maps to the `feature/` branch prefix; commit messages use the shorter `feat:` type token.
 
 Rules:
 - Always branch from `main`: `git checkout -b feature/42-description main`
@@ -71,7 +73,7 @@ docs: add ARCHITECTURE.md with C4 context diagram (#3)
 ```
 
 Rules:
-- Type must match the branch type
+- Type must match the issue type (feat/fix/docs/chore/refactor/test)
 - Lowercase, imperative, under 72 characters including the issue reference
 - No `closes` or `fixes` in commit messages — those go only in the PR body
 
