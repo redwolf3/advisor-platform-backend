@@ -27,7 +27,7 @@ export CORS_ORIGINS=http://localhost:5173
 
 ## API-First Workflow
 
-- **Specs live in `src/main/resources/api/`** — one YAML file per domain (e.g. `visitor-session-api.yaml`, `chat-api.yaml`)
+- **Specs live in `src/main/resources/api/`** — one YAML file per domain (e.g. `visitor-session-api.yaml`, `ai-chat-api.yaml`)
 - **Codegen via `openapi-generator-maven-plugin`** — generates Spring interfaces + delegate pattern into `target/generated-sources`; never edit generated files directly
 - **Generated models are POJOs** (Lombok-annotated) — not Java records; this is intentional for codegen compatibility
 - **Hand-written records** are still used for internal non-API data structures where appropriate
