@@ -48,10 +48,21 @@ public class MessageController {
         return ResponseEntity.ok(messages);
     }
 
+    /** Add a follow-up visitor message to an existing thread. */
+    @PostMapping("/thread/{threadId}/messages")
+    public ResponseEntity<AddMessageResponse> addMessage(
+            @PathVariable UUID threadId,
+            @Valid @RequestBody AddMessageRequest req) {
+        ThreadMessage message = messageService.addMessage(threadId, req.content());
+        return ResponseEntity.ok(new AddMessageResponse(message.getId()));
+    }
+
     // ── Records (inline DTOs) ─────────────────────────────────────────────────
 
     record CreateThreadRequest(@NotNull UUID visitorId, UUID aiSessionId, String subject, @NotBlank String content) {}
     record CreateThreadResponse(UUID threadId) {}
     record ThreadSummary(UUID threadId, String subject, String status, String updatedAt) {}
     record MessageSummary(UUID messageId, String senderRole, String content, String createdAt) {}
+    record AddMessageRequest(@NotBlank String content) {}
+    record AddMessageResponse(UUID messageId) {}
 }

@@ -121,4 +121,33 @@ class MessageControllerTest {
                 .andExpect(jsonPath("$[0].senderRole").value("visitor"))
                 .andExpect(jsonPath("$[0].content").value("Hello"));
     }
+
+    // ── POST /api/thread/{threadId}/messages ─────────────────────────────────
+
+    @Test
+    void addMessage_validContent_returns200WithMessageId() throws Exception {
+        UUID threadId = UUID.randomUUID();
+        UUID messageId = UUID.randomUUID();
+        ThreadMessage message = ThreadMessage.builder()
+                .thread(MessageThread.builder().visitor(new Visitor()).build())
+                .senderRole("visitor")
+                .content("Follow up question")
+                .build();
+        ReflectionTestUtils.setField(message, "id", messageId);
+        when(messageService.addMessage(eq(threadId), eq("Follow up question"))).thenReturn(message);
+
+        mockMvc.perform(post("/api/thread/{threadId}/messages", threadId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"content\":\"Follow up question\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.messageId").value(messageId.toString()));
+    }
+
+    @Test
+    void addMessage_blankContent_returns400() throws Exception {
+        mockMvc.perform(post("/api/thread/{threadId}/messages", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"content\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }
