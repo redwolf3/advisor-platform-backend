@@ -74,6 +74,14 @@ class MessageControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void createThread_nullVisitorId_returns400() throws Exception {
+        mockMvc.perform(post("/api/message")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"visitorId\":null,\"content\":\"Hello\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
     // ── GET /api/visitor/{visitorId}/threads ──────────────────────────────────
 
     @Test

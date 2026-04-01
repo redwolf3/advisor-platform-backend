@@ -89,6 +89,14 @@ class ChatControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void createSession_nullVisitorId_returns400() throws Exception {
+        mockMvc.perform(post("/api/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"visitorId\":null}"))
+                .andExpect(status().isBadRequest());
+    }
+
     // ── GET /api/visitor/{visitorId}/sessions ─────────────────────────────────
 
     @Test

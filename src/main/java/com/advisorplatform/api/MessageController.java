@@ -5,6 +5,7 @@ import com.advisorplatform.domain.entity.ThreadMessage;
 import com.advisorplatform.service.MessageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,7 @@ public class MessageController {
 
     // ── Records (inline DTOs) ─────────────────────────────────────────────────
 
-    record CreateThreadRequest(UUID visitorId, UUID aiSessionId, String subject, @NotBlank String content) {}
+    record CreateThreadRequest(@NotNull UUID visitorId, UUID aiSessionId, String subject, @NotBlank String content) {}
     record CreateThreadResponse(UUID threadId) {}
     record ThreadSummary(UUID threadId, String subject, String status, String updatedAt) {}
     record MessageSummary(UUID messageId, String senderRole, String content, String createdAt) {}
