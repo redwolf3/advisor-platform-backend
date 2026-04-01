@@ -19,17 +19,26 @@ export CORS_ORIGINS=http://localhost:5173
 
 ## Code Conventions
 
-- **Java 21** — use records, sealed interfaces, pattern matching where appropriate
+- **Java 21** — use sealed interfaces, pattern matching where appropriate
 - **Constructor injection** — never `@Autowired` on fields
-- **No Lombok on records** — use Java records for DTOs
 - **Lombok only on JPA entities** — `@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder`
 - **`@Transactional` on service write methods** — not on controllers
 - **Instant not LocalDateTime** — all timestamps UTC, mapped to `TIMESTAMPTZ`
 
+## API-First Workflow
+
+- **Specs live in `src/main/resources/api/`** — one YAML file per domain (e.g. `visitor-session-api.yaml`, `chat-api.yaml`)
+- **Codegen via `openapi-generator-maven-plugin`** — generates Spring interfaces + delegate pattern into `target/generated-sources`; never edit generated files directly
+- **Generated models are POJOs** (Lombok-annotated) — not Java records; this is intentional for codegen compatibility
+- **Hand-written records** are still used for internal non-API data structures where appropriate
+- **Delegate pattern** — implement the generated `*ApiDelegate` interface in `api/`; the generated controller wires it automatically
+- **New domains start spec-first** — write the OpenAPI YAML before writing any controller code
+- **Existing Phase 1 controllers** were written code-first; specs were reverse-engineered from them as a one-time migration
+
 ## Package Conventions
 
 ```
-api/        REST controllers + inline record DTOs
+api/        ApiDelegate implementations (business-facing API layer)
 service/    Business logic, orchestration
 domain/
   entity/   JPA entities only
@@ -37,6 +46,8 @@ domain/
 ai/         Anthropic/Spring AI integration
 config/     Spring configuration beans
 infra/      External integrations (auth, email) — stub for now
+src/main/resources/api/   OpenAPI 3 spec files (one per domain)
+target/generated-sources/ Generated Spring interfaces + POJOs — do not edit
 ```
 
 ## Schema Rules
@@ -53,3 +64,14 @@ infra/      External integrations (auth, email) — stub for now
 - Do not use `spring.jpa.hibernate.ddl-auto=create` or `update`
 - Do not store secrets in any tracked file
 - Do not add Docker to the Spring Boot build — the app runs on host, only Postgres in Docker
+
+## Git Workflow
+
+All code changes are tracked via GitHub Issues and merged via pull requests. Never commit directly to `main`. See [`docs/GITHUB-WORKFLOW.md`](docs/GITHUB-WORKFLOW.md) for the full process.
+
+Quick reference:
+- Branch pattern: `feature/{issue-number}-{kebab-description}`
+- Commit format: `type: description (#N)`
+- PR closes issue via: `closes #N` in PR body
+- Before starting work: verify or create a GitHub issue
+- After completing work: open a PR, or push branch + post progress comment on issue
