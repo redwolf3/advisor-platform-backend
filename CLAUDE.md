@@ -70,7 +70,7 @@ target/generated-sources/ Generated Spring interfaces + POJOs — do not edit
 All code changes are tracked via GitHub Issues and merged via pull requests. Never commit directly to `main`. See [`docs/GITHUB-WORKFLOW.md`](docs/GITHUB-WORKFLOW.md) for the full process.
 
 Quick reference:
-- Branch pattern: `feature/{issue-number}-{kebab-description}`
+- Branch pattern: `{prefix}/{issue-number}-{kebab-description}` where `prefix` ∈ {`feature`, `fix`, `docs`, `chore`, `refactor`, `test`}
 - Commit format: `type: description (#N)`
 - PR closes issue via: `closes #N` in PR body
 - Before starting work: verify or create a GitHub issue
