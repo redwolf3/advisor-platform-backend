@@ -41,7 +41,7 @@ class VisitorSessionControllerTest {
         visitor.setBrowserToken("token-abc");
         when(visitorService.findOrCreate("token-abc")).thenReturn(visitor);
 
-        mockMvc.perform(post("/api/visitor/identify")
+        mockMvc.perform(post("/api/v1/visitor/identify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"browserToken\":\"token-abc\"}"))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class VisitorSessionControllerTest {
 
     @Test
     void identify_blankToken_returns400() throws Exception {
-        mockMvc.perform(post("/api/visitor/identify")
+        mockMvc.perform(post("/api/v1/visitor/identify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"browserToken\":\"\"}"))
                 .andExpect(status().isBadRequest());
@@ -66,7 +66,7 @@ class VisitorSessionControllerTest {
         ReflectionTestUtils.setField(session, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(visitorService.createSession(eq(visitorId))).thenReturn(session);
 
-        mockMvc.perform(post("/api/session")
+        mockMvc.perform(post("/api/v1/session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + visitorId + "\"}"))
                 .andExpect(status().isOk())
@@ -78,7 +78,7 @@ class VisitorSessionControllerTest {
         when(visitorService.createSession(any()))
                 .thenThrow(new IllegalArgumentException("Visitor not found: some-id"));
 
-        mockMvc.perform(post("/api/session")
+        mockMvc.perform(post("/api/v1/session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + UUID.randomUUID() + "\"}"))
                 .andExpect(status().isBadRequest());
@@ -86,7 +86,7 @@ class VisitorSessionControllerTest {
 
     @Test
     void createSession_nullVisitorId_returns400() throws Exception {
-        mockMvc.perform(post("/api/session")
+        mockMvc.perform(post("/api/v1/session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":null}"))
                 .andExpect(status().isBadRequest());
@@ -101,7 +101,7 @@ class VisitorSessionControllerTest {
         ReflectionTestUtils.setField(session, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(visitorService.getSessions(visitorId)).thenReturn(List.of(session));
 
-        mockMvc.perform(get("/api/visitor/{visitorId}/sessions", visitorId))
+        mockMvc.perform(get("/api/v1/visitor/{visitorId}/sessions", visitorId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].sessionId").value(sessionId.toString()));
     }

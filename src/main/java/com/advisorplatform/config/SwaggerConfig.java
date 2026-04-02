@@ -11,7 +11,7 @@ public class SwaggerConfig {
     public GroupedOpenApi visitorSessionApi() {
         return GroupedOpenApi.builder()
                 .group("visitor-session")
-                .pathsToMatch("/api/visitor/**", "/api/session/**")
+                .pathsToMatch("/api/v1/visitor/**", "/api/v1/session/**")
                 .build();
     }
 
@@ -19,7 +19,7 @@ public class SwaggerConfig {
     public GroupedOpenApi aiChatApi() {
         return GroupedOpenApi.builder()
                 .group("ai-chat")
-                .pathsToMatch("/api/chat/**")
+                .pathsToMatch("/api/v1/chat/**")
                 .build();
     }
 
@@ -27,7 +27,7 @@ public class SwaggerConfig {
     public GroupedOpenApi messagingApi() {
         return GroupedOpenApi.builder()
                 .group("messaging")
-                .pathsToMatch("/api/message/**", "/api/thread/**")
+                .pathsToMatch("/api/v1/message/**", "/api/v1/thread/**")
                 .build();
     }
 }

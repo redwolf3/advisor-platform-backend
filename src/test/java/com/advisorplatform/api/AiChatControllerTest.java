@@ -41,7 +41,7 @@ class AiChatControllerTest {
         ReflectionTestUtils.setField(response, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(plannerAiService.chat(eq(sessionId), eq("Hello"))).thenReturn(response);
 
-        mockMvc.perform(post("/api/chat/{sessionId}", sessionId)
+        mockMvc.perform(post("/api/v1/chat/{sessionId}", sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"message\":\"Hello\"}"))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class AiChatControllerTest {
 
     @Test
     void chat_blankMessage_returns400() throws Exception {
-        mockMvc.perform(post("/api/chat/{sessionId}", UUID.randomUUID())
+        mockMvc.perform(post("/api/v1/chat/{sessionId}", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"message\":\"\"}"))
                 .andExpect(status().isBadRequest());
@@ -62,7 +62,7 @@ class AiChatControllerTest {
         UUID sessionId = UUID.randomUUID();
         when(plannerAiService.streamChat(eq(sessionId), eq("Hi"))).thenReturn(Flux.just("chunk1", "chunk2"));
 
-        mockMvc.perform(post("/api/chat/{sessionId}/stream", sessionId)
+        mockMvc.perform(post("/api/v1/chat/{sessionId}/stream", sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"message\":\"Hi\"}"))
                 .andExpect(status().isOk())

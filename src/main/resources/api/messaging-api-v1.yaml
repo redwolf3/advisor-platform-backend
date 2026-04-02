@@ -7,7 +7,7 @@ tags:
   - name: Messaging
     description: Message thread management
 paths:
-  /api/message:
+  /api/v1/message:
     post:
       tags: [Messaging]
       summary: Create a new message thread with initial visitor message
@@ -27,7 +27,7 @@ paths:
                 $ref: '#/components/schemas/CreateThreadResponse'
         '400':
           description: Validation error or visitor not found
-  /api/visitor/{visitorId}/threads:
+  /api/v1/visitor/{visitorId}/threads:
     get:
       tags: [Messaging]
       summary: List all threads for a visitor
@@ -48,7 +48,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ThreadSummary'
-  /api/thread/{threadId}/messages:
+  /api/v1/thread/{threadId}/messages:
     get:
       tags: [Messaging]
       summary: List all messages in a thread

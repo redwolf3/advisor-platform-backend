@@ -7,7 +7,7 @@ tags:
   - name: AiChat
     description: AI chat with Claude
 paths:
-  /api/chat/{sessionId}:
+  /api/v1/chat/{sessionId}:
     post:
       tags: [AiChat]
       summary: Non-streaming chat (blocking)

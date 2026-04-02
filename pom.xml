@@ -151,7 +151,7 @@
                     <id>visitor-session</id>
                     <goals><goal>generate</goal></goals>
                     <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api/visitor-session-api.yaml</inputSpec>
+                        <inputSpec>${project.basedir}/src/main/resources/api/visitor-session-api-v1.yaml</inputSpec>
                         <generatorName>spring</generatorName>
                         <output>${project.build.directory}/generated-sources/openapi</output>
                         <apiPackage>com.advisorplatform.generated.visitorsession.api</apiPackage>
@@ -173,7 +173,7 @@
                     <id>ai-chat</id>
                     <goals><goal>generate</goal></goals>
                     <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api/ai-chat-api.yaml</inputSpec>
+                        <inputSpec>${project.basedir}/src/main/resources/api/ai-chat-api-v1.yaml</inputSpec>
                         <generatorName>spring</generatorName>
                         <output>${project.build.directory}/generated-sources/openapi</output>
                         <apiPackage>com.advisorplatform.generated.aichat.api</apiPackage>
@@ -195,7 +195,7 @@
                     <id>messaging</id>
                     <goals><goal>generate</goal></goals>
                     <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api/messaging-api.yaml</inputSpec>
+                        <inputSpec>${project.basedir}/src/main/resources/api/messaging-api-v1.yaml</inputSpec>
                         <generatorName>spring</generatorName>
                         <output>${project.build.directory}/generated-sources/openapi</output>
                         <apiPackage>com.advisorplatform.generated.messaging.api</apiPackage>
@@ -217,7 +217,7 @@
                     <id>advisor</id>
                     <goals><goal>generate</goal></goals>
                     <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api/advisor-api.yaml</inputSpec>
+                        <inputSpec>${project.basedir}/src/main/resources/api/advisor-api-v1.yaml</inputSpec>
                         <generatorName>spring</generatorName>
                         <output>${project.build.directory}/generated-sources/openapi</output>
                         <apiPackage>com.advisorplatform.generated.advisor.api</apiPackage>

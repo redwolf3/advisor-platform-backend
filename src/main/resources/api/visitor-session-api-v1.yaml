@@ -7,7 +7,7 @@ tags:
   - name: VisitorSession
     description: Visitor identification and session management
 paths:
-  /api/visitor/identify:
+  /api/v1/visitor/identify:
     post:
       tags: [VisitorSession]
       summary: Find or create a visitor by browser token
@@ -27,7 +27,7 @@ paths:
                 $ref: '#/components/schemas/VisitorResponse'
         '400':
           description: Validation error
-  /api/session:
+  /api/v1/session:
     post:
       tags: [VisitorSession]
       summary: Create a new AI planning session
@@ -47,7 +47,7 @@ paths:
                 $ref: '#/components/schemas/SessionResponse'
         '400':
           description: Validation error or visitor not found
-  /api/visitor/{visitorId}/sessions:
+  /api/v1/visitor/{visitorId}/sessions:
     get:
       tags: [VisitorSession]
       summary: List sessions for a visitor

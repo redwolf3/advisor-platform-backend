@@ -45,7 +45,7 @@ class MessagingControllerTest {
         when(messageService.createThread(eq(visitorId), isNull(), eq("Help me"), eq("First message")))
                 .thenReturn(thread);
 
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + visitorId + "\","
                                 + "\"subject\":\"Help me\","
@@ -56,7 +56,7 @@ class MessagingControllerTest {
 
     @Test
     void createThread_blankContent_returns400() throws Exception {
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + UUID.randomUUID() + "\","
                                 + "\"content\":\"\"}"))
@@ -68,7 +68,7 @@ class MessagingControllerTest {
         when(messageService.createThread(any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Visitor not found: some-id"));
 
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + UUID.randomUUID() + "\","
                                 + "\"content\":\"Hello\"}"))
@@ -77,7 +77,7 @@ class MessagingControllerTest {
 
     @Test
     void createThread_nullVisitorId_returns400() throws Exception {
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":null,\"content\":\"Hello\"}"))
                 .andExpect(status().isBadRequest());
@@ -93,7 +93,7 @@ class MessagingControllerTest {
         ReflectionTestUtils.setField(thread, "updatedAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(messageService.getThreads(visitorId)).thenReturn(List.of(thread));
 
-        mockMvc.perform(get("/api/visitor/{visitorId}/threads", visitorId))
+        mockMvc.perform(get("/api/v1/visitor/{visitorId}/threads", visitorId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].threadId").value(threadId.toString()))
                 .andExpect(jsonPath("$[0].subject").value("My question"))
@@ -112,7 +112,7 @@ class MessagingControllerTest {
         ReflectionTestUtils.setField(message, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(messageService.getMessages(threadId)).thenReturn(List.of(message));
 
-        mockMvc.perform(get("/api/thread/{threadId}/messages", threadId))
+        mockMvc.perform(get("/api/v1/thread/{threadId}/messages", threadId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].messageId").value(messageId.toString()))
                 .andExpect(jsonPath("$[0].senderRole").value("visitor"))
@@ -131,7 +131,7 @@ class MessagingControllerTest {
         ReflectionTestUtils.setField(message, "id", messageId);
         when(messageService.addMessage(eq(threadId), eq("Follow up question"))).thenReturn(message);
 
-        mockMvc.perform(post("/api/thread/{threadId}/messages", threadId)
+        mockMvc.perform(post("/api/v1/thread/{threadId}/messages", threadId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"content\":\"Follow up question\"}"))
                 .andExpect(status().isOk())
@@ -140,7 +140,7 @@ class MessagingControllerTest {
 
     @Test
     void addMessage_blankContent_returns400() throws Exception {
-        mockMvc.perform(post("/api/thread/{threadId}/messages", UUID.randomUUID())
+        mockMvc.perform(post("/api/v1/thread/{threadId}/messages", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"content\":\"\"}"))
                 .andExpect(status().isBadRequest());

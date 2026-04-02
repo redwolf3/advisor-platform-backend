@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/v1/chat")
 public class AiChatStreamController {
 
     private final PlannerAiService plannerAiService;
