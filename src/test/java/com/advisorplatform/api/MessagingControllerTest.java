@@ -3,11 +3,13 @@ package com.advisorplatform.api;
 import com.advisorplatform.domain.entity.MessageThread;
 import com.advisorplatform.domain.entity.ThreadMessage;
 import com.advisorplatform.domain.entity.Visitor;
+import com.advisorplatform.generated.messaging.api.MessagingApiController;
 import com.advisorplatform.service.MessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -25,14 +27,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MessageController.class)
+@WebMvcTest(controllers = MessagingApiController.class)
+@Import(MessagingDelegate.class)
 @TestPropertySource(properties = "spring.ai.anthropic.api-key=test-key")
-class MessageControllerTest {
+class MessagingControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockBean MessageService messageService;
-
-    // ── POST /api/message ────────────────────────────────────────────────────
 
     @Test
     void createThread_validRequest_returns200WithThreadId() throws Exception {
@@ -82,8 +83,6 @@ class MessageControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ── GET /api/visitor/{visitorId}/threads ──────────────────────────────────
-
     @Test
     void getThreads_validVisitorId_returns200WithList() throws Exception {
         UUID visitorId = UUID.randomUUID();
@@ -100,8 +99,6 @@ class MessageControllerTest {
                 .andExpect(jsonPath("$[0].subject").value("My question"))
                 .andExpect(jsonPath("$[0].status").value("open"));
     }
-
-    // ── GET /api/thread/{threadId}/messages ───────────────────────────────────
 
     @Test
     void getMessages_validThreadId_returns200WithList() throws Exception {
@@ -121,8 +118,6 @@ class MessageControllerTest {
                 .andExpect(jsonPath("$[0].senderRole").value("visitor"))
                 .andExpect(jsonPath("$[0].content").value("Hello"));
     }
-
-    // ── POST /api/thread/{threadId}/messages ─────────────────────────────────
 
     @Test
     void addMessage_validContent_returns200WithMessageId() throws Exception {

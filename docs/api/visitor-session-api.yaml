@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Visitor Session API
+  description: Visitor identity and AI planning session lifecycle
+  version: 1.0.0
+tags:
+  - name: VisitorSession
+    description: Visitor identification and session management
+paths:
+  /api/visitor/identify:
+    post:
+      tags: [VisitorSession]
+      summary: Find or create a visitor by browser token
+      operationId: identify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifyRequest'
+      responses:
+        '200':
+          description: Visitor identified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitorResponse'
+        '400':
+          description: Validation error
+  /api/session:
+    post:
+      tags: [VisitorSession]
+      summary: Create a new AI planning session
+      operationId: createSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '200':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          description: Validation error or visitor not found
+  /api/visitor/{visitorId}/sessions:
+    get:
+      tags: [VisitorSession]
+      summary: List sessions for a visitor
+      operationId: getSessions
+      parameters:
+        - name: visitorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionResponse'
+components:
+  schemas:
+    IdentifyRequest:
+      type: object
+      required: [browserToken]
+      properties:
+        browserToken:
+          type: string
+          minLength: 1
+    VisitorResponse:
+      type: object
+      properties:
+        visitorId:
+          type: string
+          format: uuid
+        browserToken:
+          type: string
+    CreateSessionRequest:
+      type: object
+      required: [visitorId]
+      properties:
+        visitorId:
+          type: string
+          format: uuid
+    SessionResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
