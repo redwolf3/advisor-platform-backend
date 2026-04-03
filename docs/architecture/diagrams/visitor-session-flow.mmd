@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant Browser
+    participant API as Advisor Platform API
+    participant DB as PostgreSQL
+
+    Note over Browser,DB: Page load — visitor identification
+
+    Browser->>API: POST /api/v1/visitor/identify {browserToken}
+    API->>DB: SELECT * FROM visitor WHERE browser_token = ?
+    alt Visitor exists
+        DB-->>API: Visitor row
+        API->>DB: UPDATE visitor SET last_seen_at = now()
+    else New visitor
+        API->>DB: INSERT INTO visitor (browser_token)
+        DB-->>API: New Visitor row
+    end
+    API-->>Browser: {visitorId, browserToken}
+
+    Note over Browser,DB: Session creation
+
+    Browser->>API: POST /api/v1/session {visitorId}
+    API->>DB: SELECT * FROM visitor WHERE id = ?
+    DB-->>API: Visitor row
+    API->>DB: INSERT INTO ai_session (visitor_id)
+    DB-->>API: AiSession row
+    API-->>Browser: {sessionId, createdAt}
+
+    Note over Browser,DB: Non-streaming chat
+
+    Browser->>API: POST /api/v1/chat/{sessionId} {message}
+    API->>DB: SELECT * FROM ai_message WHERE session_id = ? ORDER BY created_at
+    DB-->>API: Message history
+    API->>DB: INSERT INTO ai_message (session_id, role='user', content)
+    API->>+Anthropic: Messages API call (history + new message)
+    Anthropic-->>-API: Assistant response
+    API->>DB: INSERT INTO ai_message (session_id, role='assistant', content, model, tokens)
+    API-->>Browser: {messageId, content, model, createdAt}

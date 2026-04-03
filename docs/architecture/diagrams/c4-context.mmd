@@ -1,0 +1,17 @@
+C4Context
+    title System Context — Advisor Platform
+
+    Person(visitor, "Visitor", "Website visitor seeking travel planning advice")
+    Person(advisor, "Advisor", "Travel advisor reviewing visitor inquiries")
+
+    System_Boundary(platform, "Advisor Platform") {
+        System(api, "Backend API", "Spring Boot 3.4 — handles AI chat, visitor identity, and advisor messaging")
+    }
+
+    System_Ext(anthropic, "Anthropic API", "Claude AI model — generates travel advice responses")
+    SystemDb_Ext(postgres, "PostgreSQL 16", "Stores visitors, AI sessions, messages, and threads")
+
+    Rel(visitor, api, "Identifies, chats with AI, sends advisor messages", "HTTPS/JSON + SSE")
+    Rel(advisor, api, "Reviews threads, replies to visitors", "HTTPS/JSON")
+    Rel(api, anthropic, "Streams AI completions", "HTTPS")
+    Rel(api, postgres, "Reads and writes data", "JDBC/Flyway")

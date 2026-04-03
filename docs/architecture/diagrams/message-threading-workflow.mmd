@@ -1,0 +1,27 @@
+flowchart TD
+    A([Visitor submits initial message]) --> B
+
+    B["POST /api/v1/message\n─────────────────\nCreates MessageThread\nstatus = 'open'\nCreates ThreadMessage\nsenderRole = 'visitor'"]
+
+    B --> C{Advisor action}
+
+    C -->|View thread| D["GET /api/v1/thread/:id/messages\nReturns all messages"]
+    D --> C
+
+    C -->|Reply ➜ Phase 2| E["POST /api/v1/thread/:id/reply\nAdds ThreadMessage\nsenderRole = 'advisor'\nstatus → 'pending_reply'"]
+    E --> F{Visitor follow-up?}
+
+    F -->|Yes| G["POST /api/v1/thread/:id/messages\nAdds ThreadMessage\nsenderRole = 'visitor'\nstatus → 'open'"]
+    G --> C
+
+    F -->|No| C
+
+    C -->|Resolve ➜ Phase 2| H["PATCH /api/v1/thread/:id/status\nstatus = 'resolved'"]
+    C -->|Close ➜ Phase 2| I["PATCH /api/v1/thread/:id/status\nstatus = 'closed'"]
+
+    H --> J([Thread archived])
+    I --> J
+
+    style E stroke-dasharray: 5 5
+    style H stroke-dasharray: 5 5
+    style I stroke-dasharray: 5 5
