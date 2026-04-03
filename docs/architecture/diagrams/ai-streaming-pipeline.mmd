@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant Browser
+    participant API as Advisor Platform API
+    participant SpringAI as Spring AI (ChatModel)
+    participant Anthropic as Anthropic API
+    participant DB as PostgreSQL
+
+    Browser->>API: POST /api/v1/chat/{sessionId}/stream {message}
+    Note over API: SSE connection established (text/event-stream)
+
+    API->>DB: SELECT * FROM ai_message WHERE session_id = ? ORDER BY created_at
+    DB-->>API: Message history (up to maxHistoryTurns window)
+
+    API->>DB: INSERT INTO ai_message (role='user', content)
+    DB-->>API: Saved
+
+    API->>SpringAI: ChatModel.stream(systemPrompt + history + userMessage)
+    SpringAI->>Anthropic: POST /v1/messages (streaming: true)
+
+    loop Token stream
+        Anthropic-->>SpringAI: data: {delta: {text: "chunk"}}
+        SpringAI-->>API: Flux<ChatResponse> chunk
+        API-->>Browser: data: chunk\n\n
+    end
+
+    Anthropic-->>SpringAI: data: [DONE]
+    SpringAI-->>API: Flux complete (doOnComplete triggered)
+
+    API->>DB: INSERT INTO ai_message (role='assistant', full content, model, latency_ms)
+    Note over Browser: SSE connection closes

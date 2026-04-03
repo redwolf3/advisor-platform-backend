@@ -1,0 +1,52 @@
+erDiagram
+    VISITOR {
+        uuid id PK
+        varchar browser_token UK
+        varchar email UK
+        boolean email_verified
+        timestamptz tos_accepted_at
+        varchar tos_version
+        timestamptz created_at
+        timestamptz last_seen_at
+    }
+
+    AI_SESSION {
+        uuid id PK
+        uuid visitor_id FK
+        timestamptz created_at
+    }
+
+    AI_MESSAGE {
+        uuid id PK
+        uuid session_id FK
+        varchar role
+        text content
+        varchar model_version
+        int token_count
+        int latency_ms
+        timestamptz created_at
+    }
+
+    MESSAGE_THREAD {
+        uuid id PK
+        uuid visitor_id FK
+        uuid ai_session_id FK
+        varchar subject
+        varchar status
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    THREAD_MESSAGE {
+        uuid id PK
+        uuid thread_id FK
+        varchar sender_role
+        text content
+        timestamptz created_at
+    }
+
+    VISITOR ||--o{ AI_SESSION : "has"
+    AI_SESSION ||--o{ AI_MESSAGE : "contains"
+    VISITOR ||--o{ MESSAGE_THREAD : "owns"
+    AI_SESSION |o--o{ MESSAGE_THREAD : "optionally linked to"
+    MESSAGE_THREAD ||--o{ THREAD_MESSAGE : "contains"
