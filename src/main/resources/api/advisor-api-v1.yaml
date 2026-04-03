@@ -1,0 +1,9 @@
+openapi: 3.0.3
+info:
+  title: Advisor API
+  description: Advisor-facing endpoints — Phase 2
+  version: 0.1.0
+tags:
+  - name: Advisor
+    description: Advisor operations (not yet implemented)
+paths: {}

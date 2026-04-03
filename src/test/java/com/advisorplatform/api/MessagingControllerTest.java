@@ -3,11 +3,13 @@ package com.advisorplatform.api;
 import com.advisorplatform.domain.entity.MessageThread;
 import com.advisorplatform.domain.entity.ThreadMessage;
 import com.advisorplatform.domain.entity.Visitor;
+import com.advisorplatform.generated.messaging.api.MessagingApiController;
 import com.advisorplatform.service.MessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -25,14 +27,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MessageController.class)
+@WebMvcTest(controllers = MessagingApiController.class)
+@Import(MessagingDelegate.class)
 @TestPropertySource(properties = "spring.ai.anthropic.api-key=test-key")
-class MessageControllerTest {
+class MessagingControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockBean MessageService messageService;
-
-    // ── POST /api/message ────────────────────────────────────────────────────
 
     @Test
     void createThread_validRequest_returns200WithThreadId() throws Exception {
@@ -44,7 +45,7 @@ class MessageControllerTest {
         when(messageService.createThread(eq(visitorId), isNull(), eq("Help me"), eq("First message")))
                 .thenReturn(thread);
 
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + visitorId + "\","
                                 + "\"subject\":\"Help me\","
@@ -55,7 +56,7 @@ class MessageControllerTest {
 
     @Test
     void createThread_blankContent_returns400() throws Exception {
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + UUID.randomUUID() + "\","
                                 + "\"content\":\"\"}"))
@@ -67,7 +68,7 @@ class MessageControllerTest {
         when(messageService.createThread(any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Visitor not found: some-id"));
 
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":\"" + UUID.randomUUID() + "\","
                                 + "\"content\":\"Hello\"}"))
@@ -76,13 +77,11 @@ class MessageControllerTest {
 
     @Test
     void createThread_nullVisitorId_returns400() throws Exception {
-        mockMvc.perform(post("/api/message")
+        mockMvc.perform(post("/api/v1/message")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"visitorId\":null,\"content\":\"Hello\"}"))
                 .andExpect(status().isBadRequest());
     }
-
-    // ── GET /api/visitor/{visitorId}/threads ──────────────────────────────────
 
     @Test
     void getThreads_validVisitorId_returns200WithList() throws Exception {
@@ -94,14 +93,12 @@ class MessageControllerTest {
         ReflectionTestUtils.setField(thread, "updatedAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(messageService.getThreads(visitorId)).thenReturn(List.of(thread));
 
-        mockMvc.perform(get("/api/visitor/{visitorId}/threads", visitorId))
+        mockMvc.perform(get("/api/v1/visitor/{visitorId}/threads", visitorId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].threadId").value(threadId.toString()))
                 .andExpect(jsonPath("$[0].subject").value("My question"))
                 .andExpect(jsonPath("$[0].status").value("open"));
     }
-
-    // ── GET /api/thread/{threadId}/messages ───────────────────────────────────
 
     @Test
     void getMessages_validThreadId_returns200WithList() throws Exception {
@@ -115,14 +112,12 @@ class MessageControllerTest {
         ReflectionTestUtils.setField(message, "createdAt", Instant.parse("2026-03-28T10:00:00Z"));
         when(messageService.getMessages(threadId)).thenReturn(List.of(message));
 
-        mockMvc.perform(get("/api/thread/{threadId}/messages", threadId))
+        mockMvc.perform(get("/api/v1/thread/{threadId}/messages", threadId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].messageId").value(messageId.toString()))
                 .andExpect(jsonPath("$[0].senderRole").value("visitor"))
                 .andExpect(jsonPath("$[0].content").value("Hello"));
     }
-
-    // ── POST /api/thread/{threadId}/messages ─────────────────────────────────
 
     @Test
     void addMessage_validContent_returns200WithMessageId() throws Exception {
@@ -136,7 +131,7 @@ class MessageControllerTest {
         ReflectionTestUtils.setField(message, "id", messageId);
         when(messageService.addMessage(eq(threadId), eq("Follow up question"))).thenReturn(message);
 
-        mockMvc.perform(post("/api/thread/{threadId}/messages", threadId)
+        mockMvc.perform(post("/api/v1/thread/{threadId}/messages", threadId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"content\":\"Follow up question\"}"))
                 .andExpect(status().isOk())
@@ -145,7 +140,7 @@ class MessageControllerTest {
 
     @Test
     void addMessage_blankContent_returns400() throws Exception {
-        mockMvc.perform(post("/api/thread/{threadId}/messages", UUID.randomUUID())
+        mockMvc.perform(post("/api/v1/thread/{threadId}/messages", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"content\":\"\"}"))
                 .andExpect(status().isBadRequest());

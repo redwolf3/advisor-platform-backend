@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: AI Chat API
+  description: AI-powered planning chat endpoints (streaming and non-streaming)
+  version: 1.0.0
+tags:
+  - name: AiChat
+    description: AI chat with Claude
+paths:
+  /api/v1/chat/{sessionId}:
+    post:
+      tags: [AiChat]
+      summary: Non-streaming chat (blocking)
+      operationId: chat
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Assistant response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Validation error or session not found
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          minLength: 1
+    ChatResponse:
+      type: object
+      properties:
+        messageId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        model:
+          type: string
+        createdAt:
+          type: string

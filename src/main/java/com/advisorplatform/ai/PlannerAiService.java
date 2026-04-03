@@ -106,6 +106,7 @@ public class PlannerAiService {
         StringBuilder fullResponse = new StringBuilder();
 
         return chatModel.stream(prompt)
+                .filter(chunk -> chunk.getResult() != null)
                 .map(chunk -> {
                     String text = chunk.getResult().getOutput().getText();
                     if (text != null) fullResponse.append(text);

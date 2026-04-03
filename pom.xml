@@ -104,6 +104,13 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,6 +133,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>com.advisorplatform.AdvisorPlatformApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -134,6 +142,123 @@
                     </excludes>
                 </configuration>
             </plugin>
+        <!-- OpenAPI codegen -->
+        <plugin>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>7.10.0</version>
+            <executions>
+                <execution>
+                    <id>visitor-session</id>
+                    <goals><goal>generate</goal></goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/api/visitor-session-api-v1.yaml</inputSpec>
+                        <generatorName>spring</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <apiPackage>com.advisorplatform.generated.visitorsession.api</apiPackage>
+                        <modelPackage>com.advisorplatform.generated.visitorsession.model</modelPackage>
+                        <generateApiTests>false</generateApiTests>
+                        <generateModelTests>false</generateModelTests>
+                        <generateApiDocumentation>false</generateApiDocumentation>
+                        <generateModelDocumentation>false</generateModelDocumentation>
+                        <configOptions>
+                            <delegatePattern>true</delegatePattern>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useLombokAnnotations>true</useLombokAnnotations>
+                            <useTags>true</useTags>
+                            <openApiNullable>false</openApiNullable>
+                        </configOptions>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>ai-chat</id>
+                    <goals><goal>generate</goal></goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/api/ai-chat-api-v1.yaml</inputSpec>
+                        <generatorName>spring</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <apiPackage>com.advisorplatform.generated.aichat.api</apiPackage>
+                        <modelPackage>com.advisorplatform.generated.aichat.model</modelPackage>
+                        <generateApiTests>false</generateApiTests>
+                        <generateModelTests>false</generateModelTests>
+                        <generateApiDocumentation>false</generateApiDocumentation>
+                        <generateModelDocumentation>false</generateModelDocumentation>
+                        <configOptions>
+                            <delegatePattern>true</delegatePattern>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useLombokAnnotations>true</useLombokAnnotations>
+                            <useTags>true</useTags>
+                            <openApiNullable>false</openApiNullable>
+                        </configOptions>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>messaging</id>
+                    <goals><goal>generate</goal></goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/api/messaging-api-v1.yaml</inputSpec>
+                        <generatorName>spring</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <apiPackage>com.advisorplatform.generated.messaging.api</apiPackage>
+                        <modelPackage>com.advisorplatform.generated.messaging.model</modelPackage>
+                        <generateApiTests>false</generateApiTests>
+                        <generateModelTests>false</generateModelTests>
+                        <generateApiDocumentation>false</generateApiDocumentation>
+                        <generateModelDocumentation>false</generateModelDocumentation>
+                        <configOptions>
+                            <delegatePattern>true</delegatePattern>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useLombokAnnotations>true</useLombokAnnotations>
+                            <useTags>true</useTags>
+                            <openApiNullable>false</openApiNullable>
+                        </configOptions>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>advisor</id>
+                    <goals><goal>generate</goal></goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/api/advisor-api-v1.yaml</inputSpec>
+                        <generatorName>spring</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <apiPackage>com.advisorplatform.generated.advisor.api</apiPackage>
+                        <modelPackage>com.advisorplatform.generated.advisor.model</modelPackage>
+                        <generateApiTests>false</generateApiTests>
+                        <generateModelTests>false</generateModelTests>
+                        <generateApiDocumentation>false</generateApiDocumentation>
+                        <generateModelDocumentation>false</generateModelDocumentation>
+                        <configOptions>
+                            <delegatePattern>true</delegatePattern>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useLombokAnnotations>true</useLombokAnnotations>
+                            <useTags>true</useTags>
+                            <openApiNullable>false</openApiNullable>
+                        </configOptions>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Code coverage — exclude generated sources -->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals><goal>prepare-agent</goal></goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals><goal>report</goal></goals>
+                </execution>
+            </executions>
+            <configuration>
+                <excludes>
+                    <exclude>com/advisorplatform/generated/**</exclude>
+                </excludes>
+            </configuration>
+        </plugin>
         </plugins>
     </build>
 </project>

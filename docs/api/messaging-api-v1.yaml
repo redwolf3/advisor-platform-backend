@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: Messaging API
+  description: Visitor-to-advisor message threading
+  version: 1.0.0
+tags:
+  - name: Messaging
+    description: Message thread management
+paths:
+  /api/v1/message:
+    post:
+      tags: [Messaging]
+      summary: Create a new message thread with initial visitor message
+      operationId: createThread
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateThreadRequest'
+      responses:
+        '200':
+          description: Thread created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateThreadResponse'
+        '400':
+          description: Validation error or visitor not found
+  /api/v1/visitor/{visitorId}/threads:
+    get:
+      tags: [Messaging]
+      summary: List all threads for a visitor
+      operationId: getThreads
+      parameters:
+        - name: visitorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Thread list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ThreadSummary'
+  /api/v1/thread/{threadId}/messages:
+    get:
+      tags: [Messaging]
+      summary: List all messages in a thread
+      operationId: getMessages
+      parameters:
+        - name: threadId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Message list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageSummary'
+    post:
+      tags: [Messaging]
+      summary: Add a visitor follow-up message to a thread
+      operationId: addMessage
+      parameters:
+        - name: threadId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMessageRequest'
+      responses:
+        '200':
+          description: Message added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddMessageResponse'
+        '400':
+          description: Validation error or thread not found
+components:
+  schemas:
+    CreateThreadRequest:
+      type: object
+      required: [visitorId, content]
+      properties:
+        visitorId:
+          type: string
+          format: uuid
+        aiSessionId:
+          type: string
+          format: uuid
+          nullable: true
+        subject:
+          type: string
+        content:
+          type: string
+          minLength: 1
+    CreateThreadResponse:
+      type: object
+      properties:
+        threadId:
+          type: string
+          format: uuid
+    ThreadSummary:
+      type: object
+      properties:
+        threadId:
+          type: string
+          format: uuid
+        subject:
+          type: string
+        status:
+          type: string
+        updatedAt:
+          type: string
+    MessageSummary:
+      type: object
+      properties:
+        messageId:
+          type: string
+          format: uuid
+        senderRole:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+    AddMessageRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+    AddMessageResponse:
+      type: object
+      properties:
+        messageId:
+          type: string
+          format: uuid
